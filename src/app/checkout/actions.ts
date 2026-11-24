@@ -13,6 +13,9 @@ import {
 import { generateOrderCode } from "@/lib/payments/orders";
 import type { ActionState } from "@/lib/types";
 
+/** Mensagem genérica: detalhes do banco/gateway nunca vão para o navegador. */
+const DB_ERROR = "Não foi possível concluir o pedido. Tente novamente em instantes.";
+
 const checkoutSchema = z.object({
   full_name: z.string().trim().min(3, "Informe seu nome completo"),
   email: z.string().trim().email("E-mail inválido"),
@@ -92,7 +95,8 @@ export async function checkout(
     .select("id")
     .single();
   if (customerError || !customer) {
-    return { ok: false, message: customerError?.message ?? "Falha ao salvar o cliente." };
+    console.error("checkout: falha ao salvar cliente", customerError);
+    return { ok: false, message: DB_ERROR };
   }
 
   const code = generateOrderCode();
@@ -111,7 +115,8 @@ export async function checkout(
     .select("id")
     .single();
   if (orderError || !order) {
-    return { ok: false, message: orderError?.message ?? "Falha ao criar o pedido." };
+    console.error("checkout: falha ao criar pedido", orderError);
+    return { ok: false, message: DB_ERROR };
   }
 
   if (packId) {
@@ -122,7 +127,10 @@ export async function checkout(
       price_cents: totalCents,
       qty: 1,
     });
-    if (itemError) return { ok: false, message: itemError.message };
+    if (itemError) {
+      console.error("checkout: falha ao salvar item", itemError);
+      return { ok: false, message: DB_ERROR };
+    }
   }
 
   const { data: payment, error: paymentError } = await admin
@@ -140,7 +148,8 @@ export async function checkout(
     .select("id")
     .single();
   if (paymentError || !payment) {
-    return { ok: false, message: paymentError?.message ?? "Falha ao registrar o pagamento." };
+    console.error("checkout: falha ao registrar pagamento", paymentError);
+    return { ok: false, message: DB_ERROR };
   }
 
   if (live) {
@@ -204,10 +213,8 @@ export async function checkout(
           .eq("id", payment.id);
       }
     } catch (error) {
-      return {
-        ok: false,
-        message: error instanceof Error ? error.message : "Falha ao gerar o pagamento.",
-      };
+      console.error("checkout: falha ao gerar pagamento no gateway", error);
+      return { ok: false, message: "Não foi possível iniciar o pagamento. Tente novamente." };
     }
   }
 

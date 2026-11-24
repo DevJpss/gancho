@@ -13,6 +13,9 @@
   "include": [
     "src/lib/format.ts",
     "src/lib/site.ts",
+    "src/lib/privacy.ts",
+    "src/lib/validation.ts",
+    "src/lib/payments/mercadopago.ts",
     "src/lib/ai/schemas.ts",
     "src/lib/ai/generate.ts",
     "tests/**/*.ts"

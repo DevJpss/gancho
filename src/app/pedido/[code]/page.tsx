@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import Link from "next/link";
 import { Suspense } from "react";
 import SimulatePaymentButton from "@/components/SimulatePaymentButton";
@@ -12,6 +13,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// O link do pedido contém o token de acesso: nada disso pode ser pré-renderizado.
+export const instant = false;
+
 type PaymentRow = {
   status: string;
   payload: Record<string, unknown> | null;
@@ -19,6 +23,7 @@ type PaymentRow = {
 };
 
 async function OrderDetail(props: PageProps<"/pedido/[code]">) {
+  await connection();
   const { code } = await props.params;
 
   if (!hasAdminConfig()) {

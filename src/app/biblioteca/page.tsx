@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import ScriptCard from "@/components/ScriptCard";
 import { getPacks, getScriptsByPack } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
+import { maskEmail, maskFullName } from "@/lib/privacy";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasAdminConfig } from "@/lib/supabase/client";
 import { firstRelation } from "@/lib/relations";
+import { accessTokenSchema } from "@/lib/validation";
 
 export const metadata: Metadata = {
   title: "Minha biblioteca",
   robots: { index: false, follow: false },
 };
 
+// Dados pessoais não podem ser pré-renderizados nem guardados em cache.
+export const instant = false;
+
 async function LibraryContent(props: PageProps<"/biblioteca">) {
+  await connection();
   const params = await props.searchParams;
   const token = typeof params.token === "string" ? params.token : "";
 
@@ -37,14 +44,14 @@ async function LibraryContent(props: PageProps<"/biblioteca">) {
     </div>
   );
 
-  if (!token || !hasAdminConfig()) {
+  if (!token || !hasAdminConfig() || !accessTokenSchema.safeParse(token).success) {
     return <main className="px-4 py-14 sm:px-8 lg:px-16">{accessForm}</main>;
   }
 
   const admin = createAdminClient();
   const { data: customer } = await admin
     .from("customers")
-    .select("id,full_name,email,access_token")
+    .select("id,full_name,email")
     .eq("access_token", token)
     .maybeSingle();
 
@@ -91,9 +98,9 @@ async function LibraryContent(props: PageProps<"/biblioteca">) {
     <main className="px-4 py-14 sm:px-8 lg:px-16">
       <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Biblioteca</p>
       <h1 className="mt-3 font-display text-5xl font-bold uppercase sm:text-6xl">
-        Olá, {customer.full_name.split(" ")[0]}
+        Olá, {maskFullName(customer.full_name)}
       </h1>
-      <p className="mt-3 text-muted">{customer.email}</p>
+      <p className="mt-3 text-muted">{maskEmail(customer.email)}</p>
 
       <div className="mt-8 flex flex-wrap gap-3">
         {hasSubscription ? (

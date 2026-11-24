@@ -38,7 +38,9 @@ async function NicheDetail(props: PageProps<"/nichos/[slug]">) {
   return (
     <>
       <p className="u-enter text-xs font-semibold tracking-[0.14em] text-accent uppercase">Nicho</p>
-      <h1 className="u-enter u-enter-1 mt-3 font-display text-6xl font-bold uppercase sm:text-7xl">{niche.name}</h1>
+      <h1 className="u-enter u-enter-1 mt-3 font-display text-6xl font-bold uppercase sm:text-7xl" data-scroll="fade">
+        {niche.name}
+      </h1>
       <p className="u-enter u-enter-2 mt-4 max-w-2xl text-lg text-muted">{niche.description}</p>
 
       <div className="u-reveal mt-10 flex flex-wrap gap-2">
@@ -49,7 +51,7 @@ async function NicheDetail(props: PageProps<"/nichos/[slug]">) {
         ))}
       </div>
 
-      <h2 className="mt-14 font-display text-3xl font-bold uppercase">
+      <h2 className="mt-14 font-display text-3xl font-bold uppercase" data-scroll="fade">
         Do pack da semana
       </h2>
       <p className="mt-2 text-sm text-muted">

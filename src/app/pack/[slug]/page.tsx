@@ -74,7 +74,7 @@ async function PackDetail(props: PageProps<"/pack/[slug]">) {
           <p className="u-enter text-xs font-semibold tracking-[0.14em] text-accent uppercase">
             Pack de {formatDate(pack.week_start)}
           </p>
-          <h1 className="u-enter u-enter-1 mt-3 font-display text-5xl leading-none font-bold uppercase sm:text-7xl">
+          <h1 className="u-enter u-enter-1 mt-3 font-display text-5xl leading-none font-bold uppercase sm:text-7xl" data-scroll="fade">
             {pack.title}
           </h1>
           <p className="u-enter u-enter-2 mt-5 max-w-2xl text-lg leading-relaxed text-muted">{pack.summary}</p>
@@ -86,7 +86,9 @@ async function PackDetail(props: PageProps<"/pack/[slug]">) {
           </div>
 
           <div className="mt-12">
-            <h2 className="font-display text-3xl font-bold uppercase">Amostra grátis</h2>
+            <h2 className="font-display text-3xl font-bold uppercase" data-scroll="fade">
+              Amostra grátis
+            </h2>
             <p className="mt-2 text-sm text-muted">
               Os primeiros {FREE_PREVIEW_COUNT} roteiros estão liberados abaixo. Os demais são
               entregues logo após o pagamento.
@@ -104,7 +106,7 @@ async function PackDetail(props: PageProps<"/pack/[slug]">) {
           </div>
         </div>
 
-        <aside className="u-card u-reveal h-fit border border-accent bg-panel p-6 lg:sticky lg:top-6">
+        <aside className="u-card u-reveal h-fit border border-accent bg-panel p-6 lg:sticky lg:top-6" data-scroll="none">
           <p className="text-xs font-semibold tracking-wide text-accent uppercase">Pack completo</p>
           <p className="mt-3 font-display text-5xl font-bold">{formatPrice(pack.price_cents)}</p>
           {pack.compare_at_price_cents ? (

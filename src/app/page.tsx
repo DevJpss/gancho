@@ -61,7 +61,7 @@ export default async function HomePage() {
     <PageTransition>
       <section className="u-grid border-b border-line px-4 py-16 sm:px-8 sm:py-24 lg:px-16">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="u-enter">
+          <div className="u-enter" data-scroll="fade">
             <p className="mb-5 inline-flex items-center gap-2 border border-accent px-3 py-1.5 text-xs font-semibold tracking-[0.12em] text-accent uppercase">
               <span className="u-pulse h-2 w-2 rounded-full bg-accent" />
               Novo pack toda segunda · 9h
@@ -98,7 +98,11 @@ export default async function HomePage() {
           </div>
 
           <div className="relative">
-            <div className="u-sample u-enter u-enter-1 border border-line bg-panel p-6 sm:p-8">
+            <div
+              className="u-sample u-enter u-enter-1 border border-line bg-panel p-6 sm:p-8"
+              data-scroll="drift"
+              data-scroll-speed="1.1"
+            >
               <div className="flex items-center justify-between border-b border-line pb-4 text-xs font-semibold tracking-wide uppercase">
                 <span className="text-accent">Amostra grátis</span>
                 <span className="text-muted">Reels · 42s</span>
@@ -126,7 +130,9 @@ export default async function HomePage() {
       </section>
 
       <section className="border-b border-line px-4 py-16 sm:px-8 lg:px-16">
-        <h2 className="font-display text-4xl font-bold uppercase sm:text-5xl">Como funciona</h2>
+        <h2 className="font-display text-4xl font-bold uppercase sm:text-5xl" data-scroll="fade">
+          Como funciona
+        </h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {steps.map((step) => (
             <article key={step.number} className="u-card u-reveal border-t-4 border-accent bg-panel p-6">
@@ -145,7 +151,7 @@ export default async function HomePage() {
               <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">
                 Pack da semana · {formatWeekRange(pack.week_start)}
               </p>
-              <h2 className="mt-3 font-display text-4xl font-bold uppercase sm:text-5xl">
+              <h2 className="mt-3 font-display text-4xl font-bold uppercase sm:text-5xl" data-scroll="fade">
                 Pronto para gravar hoje
               </h2>
             </div>
@@ -175,7 +181,9 @@ export default async function HomePage() {
       ) : null}
 
       <section id="nichos" className="border-b border-line px-4 py-16 sm:px-8 lg:px-16">
-        <h2 className="font-display text-4xl font-bold uppercase sm:text-5xl">Oito nichos, todo mundo atendido</h2>
+        <h2 className="font-display text-4xl font-bold uppercase sm:text-5xl" data-scroll="fade">
+          Oito nichos, todo mundo atendido
+        </h2>
         <p className="mt-3 max-w-2xl text-muted">
           Cada semana tem um roteiro para cada subnicho. Escolha o seu e grave sem precisar
           transformar notícia em ideia.
@@ -197,7 +205,7 @@ export default async function HomePage() {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Planos</p>
-            <h2 className="mt-3 font-display text-4xl font-bold uppercase sm:text-5xl">
+            <h2 className="mt-3 font-display text-4xl font-bold uppercase sm:text-5xl" data-scroll="fade">
               Um pack ou a semana inteira
             </h2>
           </div>
@@ -253,7 +261,9 @@ export default async function HomePage() {
       </section>
 
       <section className="px-4 py-16 sm:px-8 lg:px-16">
-        <h2 className="font-display text-4xl font-bold uppercase sm:text-5xl">Perguntas frequentes</h2>
+        <h2 className="font-display text-4xl font-bold uppercase sm:text-5xl" data-scroll="fade">
+          Perguntas frequentes
+        </h2>
         <div className="mt-8 max-w-3xl divide-y divide-line border-y border-line">
           {faqs.map((faq) => (
             <details key={faq.question} className="group py-5">

@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
+import ScrollMotion from "@/components/ScrollMotion";
 import { jsonLdHtml } from "@/lib/jsonld";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL, absoluteUrl } from "@/lib/site";
 
@@ -74,9 +75,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       data-scroll-behavior="smooth"
       className={`${display.variable} ${body.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&!CSS.supports("animation-timeline: view()"))document.documentElement.setAttribute("data-motion-fallback","")}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="flex min-h-screen flex-col">
         <SmoothScroll />
+        <ScrollMotion />
         <div className="u-scroll-progress" aria-hidden="true" />
         <a
           href="#conteudo"

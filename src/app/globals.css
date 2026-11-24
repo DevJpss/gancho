@@ -113,29 +113,110 @@ body {
   animation-delay: 210ms;
 }
 
-/* Revelação no scroll: entra subindo, descansa e sai subindo ao deixar a tela. */
-@keyframes u-scroll-fade {
+/* Movimento amarrado ao scroll: entra com peso, descansa e sai subindo. */
+@keyframes u-scroll-reveal {
   0% {
     opacity: 0;
-    transform: translateY(22px);
+    translate: 0 68px;
+    scale: 0.95;
   }
-  14%,
-  82% {
+  18%,
+  72% {
     opacity: 1;
-    transform: none;
+    translate: 0 0;
+    scale: 1;
   }
   100% {
     opacity: 0;
-    transform: translateY(-14px);
+    translate: 0 -52px;
+    scale: 0.98;
+  }
+}
+
+@keyframes u-scroll-fade {
+  0%,
+  8% {
+    opacity: 0;
+    translate: 0 44px;
+  }
+  28%,
+  56% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 -76px;
+  }
+}
+
+@keyframes u-scroll-drift {
+  from {
+    translate: 0 42px;
+    rotate: -1.2deg;
+  }
+  to {
+    translate: 0 -42px;
+    rotate: 1.2deg;
   }
 }
 
 @supports (animation-timeline: view()) {
-  .u-reveal {
+  .u-reveal,
+  [data-scroll="reveal"] {
+    animation: u-scroll-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+
+  [data-scroll="fade"] {
     animation: u-scroll-fade linear both;
     animation-timeline: view();
     animation-range: entry 0% exit 100%;
   }
+
+  [data-scroll="drift"] {
+    animation: u-scroll-drift linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+
+  [data-scroll="none"] {
+    animation: none !important;
+    opacity: 1 !important;
+    translate: none !important;
+    rotate: 0deg !important;
+    scale: 1 !important;
+  }
+}
+
+/* Fallback JS para navegadores sem scroll-driven animations. */
+html[data-motion-fallback] .u-reveal,
+html[data-motion-fallback] [data-scroll="reveal"] {
+  opacity: var(--sm-o, 0);
+  translate: 0 var(--sm-y, 68px);
+  scale: var(--sm-s, 0.95);
+  will-change: opacity, translate, scale;
+}
+
+html[data-motion-fallback] [data-scroll="fade"] {
+  opacity: var(--sm-o, 0);
+  translate: 0 var(--sm-y, 44px);
+  scale: var(--sm-s, 1);
+  will-change: opacity, translate, scale;
+}
+
+html[data-motion-fallback] [data-scroll="drift"] {
+  translate: 0 var(--sm-y, 42px);
+  rotate: var(--sm-r, -1.2deg);
+  will-change: translate, rotate;
+}
+
+html[data-motion-fallback] [data-scroll="none"] {
+  opacity: 1 !important;
+  translate: none !important;
+  rotate: 0deg !important;
+  scale: 1 !important;
 }
 
 /* Botões com feedback tátil e sombra editorial. */
@@ -412,10 +493,14 @@ details {
   }
 
   .u-enter,
-  .u-reveal {
+  .u-reveal,
+  [data-scroll] {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
+    translate: none !important;
+    rotate: 0deg !important;
+    scale: 1 !important;
   }
 
   .u-ticker::after,

@@ -21,7 +21,7 @@ export default async function PacksPage() {
   return (
     <PageTransition className="px-4 py-14 sm:px-8 lg:px-16">
       <p className="u-enter text-xs font-semibold tracking-[0.14em] text-accent uppercase">Biblioteca</p>
-      <h1 className="u-enter u-enter-1 mt-3 font-display text-6xl font-bold uppercase sm:text-7xl">
+      <h1 className="u-enter u-enter-1 mt-3 font-display text-6xl font-bold uppercase sm:text-7xl" data-scroll="fade">
         Packs publicados
       </h1>
       <p className="mt-4 max-w-2xl text-muted">

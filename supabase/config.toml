@@ -1,0 +1,4 @@
+# Configuração mínima da pasta supabase/.
+# O projeto remoto é configurado no dashboard do Supabase; a integração com GitHub
+# aplica os arquivos de supabase/migrations automaticamente no push.
+project_id = "gancho"

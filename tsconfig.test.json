@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "incremental": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": ".test-dist",
+    "rootDir": ".",
+    "paths": {},
+    "plugins": []
+  },
+  "include": [
+    "src/lib/format.ts",
+    "src/lib/site.ts",
+    "src/lib/ai/schemas.ts",
+    "src/lib/ai/generate.ts",
+    "tests/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

@@ -19,17 +19,17 @@ export default function Footer() {
           <div>
             <p className="mb-3 font-semibold tracking-wider uppercase">Site</p>
             <div className="flex flex-col gap-2 text-line">
-              <Link href="/packs" className="hover:text-white">Packs</Link>
-              <Link href="/planos" className="hover:text-white">Planos</Link>
-              <Link href="/biblioteca" className="hover:text-white">Biblioteca</Link>
+              <Link href="/packs" className="u-link hover:text-white">Packs</Link>
+              <Link href="/planos" className="u-link hover:text-white">Planos</Link>
+              <Link href="/biblioteca" className="u-link hover:text-white">Biblioteca</Link>
             </div>
           </div>
           <div>
             <p className="mb-3 font-semibold tracking-wider uppercase">Legal</p>
             <div className="flex flex-col gap-2 text-line">
-              <Link href="/termos" className="hover:text-white">Termos de uso</Link>
-              <Link href="/privacidade" className="hover:text-white">Privacidade</Link>
-              <Link href="/admin/login" className="hover:text-white">Admin</Link>
+              <Link href="/termos" className="u-link hover:text-white">Termos de uso</Link>
+              <Link href="/privacidade" className="u-link hover:text-white">Privacidade</Link>
+              <Link href="/admin/login" className="u-link hover:text-white">Admin</Link>
             </div>
           </div>
         </div>

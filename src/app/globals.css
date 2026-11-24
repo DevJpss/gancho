@@ -11,6 +11,11 @@
   --font-display: var(--font-display-face), "Arial Narrow", sans-serif;
 }
 
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -31,6 +36,230 @@ body {
   outline-offset: 2px;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Movimento — camada única, reutilizável e compatível com cacheComponents     */
+/* -------------------------------------------------------------------------- */
+
+@keyframes u-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes u-sweep {
+  0%,
+  62% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes u-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(232, 71, 46, 0.42);
+    opacity: 1;
+  }
+  55% {
+    box-shadow: 0 0 0 7px rgba(232, 71, 46, 0);
+    opacity: 0.75;
+  }
+}
+
+@keyframes u-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Entrada no carregamento da página. */
+.u-enter {
+  animation: u-rise 620ms var(--ease-out) both;
+}
+.u-enter-1 {
+  animation-delay: 70ms;
+}
+.u-enter-2 {
+  animation-delay: 140ms;
+}
+.u-enter-3 {
+  animation-delay: 210ms;
+}
+
+/* Revelação no scroll, apenas onde o navegador suporta scroll-driven CSS. */
+@supports (animation-timeline: view()) {
+  .u-reveal {
+    animation: u-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 4% cover 24%;
+  }
+}
+
+/* Botões com feedback tátil e sombra editorial. */
+.u-btn {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  transition:
+    transform 220ms var(--ease-out),
+    box-shadow 220ms var(--ease-out),
+    background-color 220ms var(--ease-out),
+    color 220ms var(--ease-out),
+    opacity 220ms var(--ease-out);
+}
+.u-btn:hover {
+  transform: translateY(-2px);
+}
+.u-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+.u-btn:disabled {
+  transform: none;
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.u-btn--primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+.u-btn--primary:hover {
+  box-shadow: 4px 4px 0 0 var(--color-ink);
+}
+.u-btn--dark {
+  background: var(--color-ink);
+  color: #fff;
+}
+.u-btn--dark:hover {
+  background: var(--color-accent);
+  box-shadow: 4px 4px 0 0 var(--color-ink);
+}
+.u-btn--outline {
+  border: 1px solid var(--color-ink);
+  color: var(--color-ink);
+}
+.u-btn--outline:hover {
+  background: var(--color-ink);
+  color: #fff;
+  box-shadow: 4px 4px 0 0 var(--color-accent);
+}
+.u-btn--block {
+  width: 100%;
+}
+
+/* Links com sublinhado que cresce. */
+.u-link {
+  position: relative;
+  transition: color 180ms ease;
+}
+.u-link::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 240ms var(--ease-out);
+}
+.u-link:hover::after,
+.u-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Cartões com leve elevação — sem mudar layout nem quebrar o grid. */
+.u-card {
+  transition:
+    transform 280ms var(--ease-out),
+    box-shadow 280ms var(--ease-out);
+}
+.u-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 0 0 var(--color-ink);
+}
+
+/* Células do grid de nichos: só cor, para não desalinhar o gap-px. */
+.u-cell {
+  transition: background-color 220ms ease;
+}
+.u-cell:hover {
+  background: #fff;
+}
+
+/* Painel de amostra do hero. */
+.u-sample {
+  box-shadow: 12px 12px 0 0 var(--color-ink);
+  transition:
+    transform 340ms var(--ease-out),
+    box-shadow 340ms var(--ease-out);
+}
+.u-sample:hover {
+  transform: translateY(-6px) rotate(-0.6deg);
+  box-shadow: 18px 18px 0 0 var(--color-ink);
+}
+
+/* Detalhes sutis de fundo e de estado. */
+.u-grid {
+  background-image:
+    linear-gradient(to right, rgba(23, 24, 26, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(23, 24, 26, 0.055) 1px, transparent 1px);
+  background-position: center top;
+  background-size: 52px 52px;
+}
+.u-ticker {
+  position: relative;
+  overflow: hidden;
+}
+.u-ticker::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  transform: translateX(-100%);
+  animation: u-sweep 7s ease-in-out infinite;
+  pointer-events: none;
+}
+.u-pulse {
+  animation: u-pulse 2.4s ease-in-out infinite;
+}
+.u-spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 9999px;
+  animation: u-spin 700ms linear infinite;
+}
+
+/* Abertura suave dos <details> onde o navegador suporta. */
+details {
+  interpolate-size: allow-keywords;
+}
+@supports selector(details::details-content) {
+  details::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 280ms var(--ease-out),
+      content-visibility 280ms allow-discrete;
+  }
+  details[open]::details-content {
+    block-size: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html,
   html[data-scroll-behavior="smooth"] {
@@ -44,5 +273,17 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .u-enter,
+  .u-reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .u-ticker::after,
+  .u-spinner {
+    display: none;
   }
 }

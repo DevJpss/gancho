@@ -56,11 +56,11 @@ export default async function HomePage() {
 
   return (
     <main>
-      <section className="border-b border-line px-4 py-16 sm:px-8 sm:py-24 lg:px-16">
+      <section className="u-grid border-b border-line px-4 py-16 sm:px-8 sm:py-24 lg:px-16">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
-          <div>
+          <div className="u-enter">
             <p className="mb-5 inline-flex items-center gap-2 border border-accent px-3 py-1.5 text-xs font-semibold tracking-[0.12em] text-accent uppercase">
-              <span className="h-2 w-2 rounded-full bg-accent" />
+              <span className="u-pulse h-2 w-2 rounded-full bg-accent" />
               Novo pack toda segunda · 9h
             </p>
             <h1 className="font-display text-6xl leading-[0.9] font-bold uppercase sm:text-8xl">
@@ -76,13 +76,13 @@ export default async function HomePage() {
             <div className="mt-9 flex flex-wrap gap-3">
               <Link
                 href={pack ? `/pack/${pack.slug}` : "/packs"}
-                className="bg-accent px-7 py-4 font-semibold text-white hover:opacity-90"
+                className="u-btn u-btn--primary px-7"
               >
                 Ver pack da semana
               </Link>
               <Link
                 href="/planos"
-                className="border border-ink px-7 py-4 font-semibold hover:bg-ink hover:text-white"
+                className="u-btn u-btn--outline px-7"
               >
                 Ver assinatura
               </Link>
@@ -93,7 +93,7 @@ export default async function HomePage() {
           </div>
 
           <div className="relative">
-            <div className="border border-line bg-panel p-6 shadow-[12px_12px_0_0_var(--color-ink)] sm:p-8">
+            <div className="u-sample u-enter u-enter-1 border border-line bg-panel p-6 sm:p-8">
               <div className="flex items-center justify-between border-b border-line pb-4 text-xs font-semibold tracking-wide uppercase">
                 <span className="text-accent">Amostra grátis</span>
                 <span className="text-muted">Reels · 42s</span>
@@ -124,7 +124,7 @@ export default async function HomePage() {
         <h2 className="font-display text-4xl font-bold uppercase sm:text-5xl">Como funciona</h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {steps.map((step) => (
-            <article key={step.number} className="border-t-4 border-accent bg-panel p-6">
+            <article key={step.number} className="u-card u-reveal border-t-4 border-accent bg-panel p-6">
               <p className="font-display text-5xl font-bold text-line">{step.number}</p>
               <h3 className="mt-4 font-display text-2xl font-bold uppercase">{step.title}</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted">{step.text}</p>
@@ -144,7 +144,7 @@ export default async function HomePage() {
                 Pronto para gravar hoje
               </h2>
             </div>
-            <Link href={`/pack/${pack.slug}`} className="font-semibold text-accent underline underline-offset-4">
+            <Link href={`/pack/${pack.slug}`} className="u-link font-semibold text-accent underline underline-offset-4">
               Ver todos os {pack.scripts_count} roteiros →
             </Link>
           </div>
@@ -160,7 +160,7 @@ export default async function HomePage() {
             </div>
             <Link
               href={`/checkout?kind=pack&slug=${pack.slug}`}
-              className="bg-accent px-7 py-4 font-semibold text-white hover:opacity-90"
+              className="u-btn u-btn--primary px-7"
             >
               Comprar pack avulso
             </Link>
@@ -176,7 +176,7 @@ export default async function HomePage() {
         </p>
         <div className="mt-10 grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
           {niches.map((niche) => (
-            <div key={niche.id} className="bg-panel p-5">
+            <div key={niche.id} className="u-cell u-reveal bg-panel p-5">
               <h3 className="font-display text-xl font-bold uppercase">{niche.name}</h3>
               <p className="mt-2 text-xs leading-relaxed text-muted">{niche.description}</p>
               <p className="mt-4 text-[11px] font-semibold tracking-wide text-accent uppercase">
@@ -201,7 +201,7 @@ export default async function HomePage() {
           </p>
         </div>
         <div className="mt-10 grid gap-6 md:grid-cols-2">
-          <article className="border border-line bg-panel p-7">
+          <article className="u-card u-reveal border border-line bg-panel p-7">
             <p className="text-xs font-semibold tracking-wide text-muted uppercase">Avulso</p>
             <h3 className="mt-2 font-display text-3xl font-bold uppercase">Pack da semana</h3>
             <p className="mt-4 font-display text-5xl font-bold">
@@ -215,12 +215,12 @@ export default async function HomePage() {
             </ul>
             <Link
               href={pack ? `/checkout?kind=pack&slug=${pack.slug}` : "/packs"}
-              className="mt-8 block bg-ink px-6 py-3.5 text-center font-semibold text-white hover:bg-accent"
+              className="u-btn u-btn--dark u-btn--block mt-8 px-6"
             >
               Comprar avulso
             </Link>
           </article>
-          <article className="border-2 border-accent bg-panel p-7">
+          <article className="u-card u-reveal border-2 border-accent bg-panel p-7">
             <p className="text-xs font-semibold tracking-wide text-accent uppercase">Recorrência</p>
             <h3 className="mt-2 font-display text-3xl font-bold uppercase">
               {plan?.name ?? "Gancho Pro"}
@@ -236,7 +236,7 @@ export default async function HomePage() {
             </ul>
             <Link
               href={`/checkout?kind=subscription&slug=${plan?.slug ?? "pro"}`}
-              className="mt-8 block bg-accent px-6 py-3.5 text-center font-semibold text-white hover:opacity-90"
+              className="u-btn u-btn--primary u-btn--block mt-8 px-6"
             >
               Assinar
             </Link>
@@ -249,7 +249,7 @@ export default async function HomePage() {
         <div className="mt-8 max-w-3xl divide-y divide-line border-y border-line">
           {faqs.map((faq) => (
             <details key={faq.question} className="group py-5">
-              <summary className="cursor-pointer font-semibold marker:text-accent">
+              <summary className="cursor-pointer font-semibold transition-colors hover:text-accent marker:text-accent">
                 {faq.question}
               </summary>
               <p className="mt-3 text-sm leading-relaxed text-muted">{faq.answer}</p>

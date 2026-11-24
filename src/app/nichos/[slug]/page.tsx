@@ -34,11 +34,11 @@ async function NicheDetail(props: PageProps<"/nichos/[slug]">) {
 
   return (
     <>
-      <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Nicho</p>
-      <h1 className="mt-3 font-display text-6xl font-bold uppercase sm:text-7xl">{niche.name}</h1>
-      <p className="mt-4 max-w-2xl text-lg text-muted">{niche.description}</p>
+      <p className="u-enter text-xs font-semibold tracking-[0.14em] text-accent uppercase">Nicho</p>
+      <h1 className="u-enter u-enter-1 mt-3 font-display text-6xl font-bold uppercase sm:text-7xl">{niche.name}</h1>
+      <p className="u-enter u-enter-2 mt-4 max-w-2xl text-lg text-muted">{niche.description}</p>
 
-      <div className="mt-10 flex flex-wrap gap-2">
+      <div className="u-reveal mt-10 flex flex-wrap gap-2">
         {niche.subniches?.map((sub) => (
           <span key={sub.id} className="border border-line bg-panel px-3 py-2 text-sm font-medium">
             {sub.name}
@@ -54,7 +54,7 @@ async function NicheDetail(props: PageProps<"/nichos/[slug]">) {
       </p>
       <div className="mt-6 grid gap-5 md:grid-cols-2">
         {scripts.map((script) => (
-          <article key={script.id} className="border border-line bg-panel p-6">
+          <article key={script.id} className="u-card u-reveal border border-line bg-panel p-6">
             <p className="text-xs font-semibold tracking-wide text-accent uppercase">
               {script.subniches?.name ?? "Subnicho"}
             </p>
@@ -72,7 +72,7 @@ async function NicheDetail(props: PageProps<"/nichos/[slug]">) {
       {pack ? (
         <Link
           href={`/pack/${pack.slug}`}
-          className="mt-10 inline-block bg-accent px-7 py-4 font-semibold text-white hover:opacity-90"
+          className="u-btn u-btn--primary mt-10 px-7"
         >
           Ver pack completo →
         </Link>

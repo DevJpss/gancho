@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Spinner from "@/components/Spinner";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginForm() {
@@ -32,7 +33,7 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="grid max-w-md gap-4 border border-line bg-panel p-6">
+    <form onSubmit={submit} aria-busy={pending} className="u-card grid max-w-md gap-4 border border-line bg-panel p-6">
       <label className="grid gap-1.5 text-sm font-medium">
         E-mail
         <input
@@ -56,8 +57,10 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="bg-accent px-6 py-3 font-semibold text-white disabled:opacity-50"
+        aria-busy={pending}
+        className="u-btn u-btn--primary px-6"
       >
+        {pending ? <Spinner /> : null}
         {pending ? "Entrando..." : "Entrar"}
       </button>
       {error ? <p role="alert" className="text-sm text-red-700">{error}</p> : null}

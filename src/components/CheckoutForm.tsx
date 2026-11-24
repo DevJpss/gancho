@@ -1,12 +1,13 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import Spinner from "@/components/Spinner";
 import { checkout } from "@/app/checkout/actions";
 import { formatPrice } from "@/lib/format";
 import type { ActionState } from "@/lib/types";
 
 const field =
-  "w-full border border-line bg-white px-3 py-2.5 text-sm outline-none focus:border-accent";
+  "w-full border border-line bg-white px-3 py-2.5 text-sm focus:border-accent";
 const label = "flex flex-col gap-1.5 text-sm font-medium";
 
 type Props = {
@@ -25,7 +26,7 @@ export default function CheckoutForm({ kind, slug, title, priceCents }: Props) {
   const isSubscription = kind === "subscription";
 
   return (
-    <form action={formAction} className="grid gap-8 lg:grid-cols-[1fr_320px]">
+    <form action={formAction} aria-busy={pending} className="grid gap-8 lg:grid-cols-[1fr_320px]">
       <input type="hidden" name="kind" value={kind} />
       <input type="hidden" name="slug" value={slug} />
 
@@ -113,8 +114,10 @@ export default function CheckoutForm({ kind, slug, title, priceCents }: Props) {
         <button
           type="submit"
           disabled={pending}
-          className="mt-6 inline-flex min-h-12 w-full items-center justify-center bg-accent px-6 font-semibold text-white disabled:opacity-50"
+          aria-busy={pending}
+          className="u-btn u-btn--primary u-btn--block mt-6 px-6"
         >
+          {pending ? <Spinner /> : null}
           {pending ? "Criando pedido..." : "Finalizar pedido"}
         </button>
         <p className="mt-4 text-xs leading-relaxed text-muted">

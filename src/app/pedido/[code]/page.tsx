@@ -28,7 +28,7 @@ async function OrderDetail(props: PageProps<"/pedido/[code]">) {
 
   if (!hasAdminConfig()) {
     return (
-      <div className="border border-line bg-panel p-8">
+      <div className="u-card u-enter border border-line bg-panel p-8">
         <h1 className="font-display text-3xl font-bold uppercase">Pedido {code}</h1>
         <p className="mt-3 text-sm text-muted">
           Configure o Supabase para acompanhar pedidos reais.
@@ -46,9 +46,9 @@ async function OrderDetail(props: PageProps<"/pedido/[code]">) {
 
   if (!order) {
     return (
-      <div className="border border-line bg-panel p-8">
+      <div className="u-card u-enter border border-line bg-panel p-8">
         <h1 className="font-display text-3xl font-bold uppercase">Pedido não encontrado</h1>
-        <Link href="/packs" className="mt-4 inline-block font-semibold text-accent">
+        <Link href="/packs" className="u-link mt-4 inline-block font-semibold text-accent">
           Ver packs →
         </Link>
       </div>
@@ -74,25 +74,25 @@ async function OrderDetail(props: PageProps<"/pedido/[code]">) {
   return (
     <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
       <div>
-        <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Pedido {order.code}</p>
-        <h1 className="mt-3 font-display text-5xl leading-none font-bold uppercase sm:text-6xl">
+        <p className="u-enter text-xs font-semibold tracking-[0.14em] text-accent uppercase">Pedido {order.code}</p>
+        <h1 className="u-enter u-enter-1 mt-3 font-display text-5xl leading-none font-bold uppercase sm:text-6xl">
           {paid ? "Conteúdo liberado" : "Pagamento pendente"}
         </h1>
-        <p className="mt-5 max-w-xl text-muted">
+        <p className="u-enter u-enter-2 mt-5 max-w-xl text-muted">
           {paid
             ? "Seu pagamento foi confirmado. Guarde o link da biblioteca abaixo para acessar os roteiros quando quiser."
             : "Escolha o método abaixo para concluir. O acesso é liberado automaticamente quando o pagamento for confirmado."}
         </p>
 
         {paid && libraryUrl ? (
-          <div className="mt-8 border-2 border-accent bg-panel p-6">
+          <div className="u-card u-reveal mt-8 border-2 border-accent bg-panel p-6">
             <p className="text-xs font-semibold tracking-wide text-accent uppercase">Acesso ao conteúdo</p>
             <p className="mt-3 text-sm text-muted">
               Este link é pessoal e não depende de login. Salve nos favoritos.
             </p>
             <Link
               href={libraryUrl}
-              className="mt-5 inline-block bg-accent px-7 py-4 font-semibold text-white hover:opacity-90"
+              className="u-btn u-btn--primary mt-5 px-7"
             >
               Abrir minha biblioteca →
             </Link>
@@ -101,7 +101,7 @@ async function OrderDetail(props: PageProps<"/pedido/[code]">) {
         ) : null}
 
         {!paid && pay ? (
-          <div className="mt-8 border border-line bg-panel p-6">
+          <div className="u-card u-reveal mt-8 border border-line bg-panel p-6">
             <h2 className="font-display text-2xl font-bold uppercase">Pagar {formatPrice(order.total_cents)}</h2>
             {pay.provider === "demo" ? (
               <div className="mt-5 grid gap-4">
@@ -133,7 +133,7 @@ async function OrderDetail(props: PageProps<"/pedido/[code]">) {
             {(method === "card" || method === "preapproval") && typeof payload.init_point === "string" && payload.init_point ? (
               <a
                 href={payload.init_point}
-                className="mt-5 inline-block bg-accent px-7 py-4 font-semibold text-white hover:opacity-90"
+                className="u-btn u-btn--primary mt-5 px-7"
               >
                 {method === "preapproval" ? "Ativar assinatura no Mercado Pago" : "Ir para o pagamento"}
               </a>
@@ -148,7 +148,7 @@ async function OrderDetail(props: PageProps<"/pedido/[code]">) {
         ) : null}
       </div>
 
-      <aside className="h-fit border border-line bg-panel p-6">
+      <aside className="u-card u-reveal h-fit border border-line bg-panel p-6">
         <h2 className="font-display text-2xl font-bold uppercase">Resumo</h2>
         <div className="mt-4 space-y-2 text-sm">
           <p className="text-muted">
@@ -164,7 +164,7 @@ async function OrderDetail(props: PageProps<"/pedido/[code]">) {
             Status: {paid ? "pago" : order.status}
           </p>
         </div>
-        <Link href="/packs" className="mt-6 block text-center text-sm font-semibold text-accent">
+        <Link href="/packs" className="u-link mt-6 block text-center text-sm font-semibold text-accent">
           Ver outros packs
         </Link>
       </aside>

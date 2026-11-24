@@ -24,7 +24,7 @@ async function LibraryContent(props: PageProps<"/biblioteca">) {
   const token = typeof params.token === "string" ? params.token : "";
 
   const accessForm = (
-    <div className="max-w-md border border-line bg-panel p-6">
+    <div className="u-card u-enter max-w-md border border-line bg-panel p-6">
       <h1 className="font-display text-3xl font-bold uppercase">Minha biblioteca</h1>
       <p className="mt-3 text-sm text-muted">
         Informe o token recebido na página do pedido. Ele fica no link que aparece depois da
@@ -35,9 +35,9 @@ async function LibraryContent(props: PageProps<"/biblioteca">) {
           name="token"
           required
           placeholder="token de acesso"
-          className="min-w-0 flex-1 border border-line bg-white px-3 py-2.5 text-sm"
+          className="min-w-0 flex-1 border border-line bg-white px-3 py-2.5 text-sm focus:border-accent"
         />
-        <button type="submit" className="bg-accent px-5 py-2.5 text-sm font-semibold text-white">
+        <button type="submit" className="u-btn u-btn--primary px-5 text-sm">
           Acessar
         </button>
       </form>
@@ -116,7 +116,7 @@ async function LibraryContent(props: PageProps<"/biblioteca">) {
       </div>
 
       {!visiblePacks.length ? (
-        <div className="mt-10 border border-line bg-panel p-8">
+        <div className="u-card u-reveal mt-10 border border-line bg-panel p-8">
           <p className="font-semibold">Nenhum pack liberado ainda.</p>
           <p className="mt-2 text-sm text-muted">
             Se você já pagou, aguarde a confirmação ou verifique se usou o link do pedido correto.
@@ -128,7 +128,7 @@ async function LibraryContent(props: PageProps<"/biblioteca">) {
         {visiblePacks.map((pack) => {
           const scripts = scriptsByPack.get(pack.id) ?? [];
           return (
-            <section key={pack.id}>
+            <section key={pack.id} className="u-reveal">
               <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
                 <div>
                   <p className="text-xs font-semibold tracking-wide text-accent uppercase">
@@ -141,7 +141,7 @@ async function LibraryContent(props: PageProps<"/biblioteca">) {
               <div className="mt-6 grid gap-4">
                 {scripts.map((script, index) => (
                   <details key={script.id} className="border border-line bg-panel">
-                    <summary className="cursor-pointer px-5 py-4 font-semibold">
+                    <summary className="cursor-pointer px-5 py-4 font-semibold transition-colors hover:text-accent">
                       {String(index + 1).padStart(2, "0")} — {script.title}
                     </summary>
                     <div className="border-t border-line px-5 pb-5">

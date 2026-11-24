@@ -28,7 +28,7 @@ export default async function AdminPacksPage() {
               <form action={setPackStatus}>
                 <input type="hidden" name="id" value={pack.id} />
                 <input type="hidden" name="status" value={pack.status === "published" ? "draft" : "published"} />
-                <button type="submit" className="border border-ink px-3 py-1.5 text-xs font-semibold hover:bg-ink hover:text-white">
+                <button type="submit" className="border border-ink px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-ink hover:text-white">
                   {pack.status === "published" ? "Despublicar" : "Publicar"}
                 </button>
               </form>

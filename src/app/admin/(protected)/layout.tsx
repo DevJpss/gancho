@@ -20,7 +20,7 @@ async function AdminGuard({ children }: { children: React.ReactNode }) {
           Logado como <strong className="text-ink">{user.email}</strong>
         </span>
         <form action={signOut}>
-          <button type="submit" className="border border-ink px-4 py-2 font-semibold hover:bg-ink hover:text-white">
+          <button type="submit" className="u-btn u-btn--outline px-4 text-sm">
             Sair
           </button>
         </form>

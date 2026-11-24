@@ -35,7 +35,7 @@ async function PackDetail(props: PageProps<"/pack/[slug]">) {
     return (
       <div className="border border-line bg-panel p-8">
         <h1 className="font-display text-3xl font-bold uppercase">Pack não encontrado</h1>
-        <Link href="/packs" className="mt-4 inline-block font-semibold text-accent">
+        <Link href="/packs" className="u-link mt-4 inline-block font-semibold text-accent">
           Ver todos os packs →
         </Link>
       </div>
@@ -67,15 +67,15 @@ async function PackDetail(props: PageProps<"/pack/[slug]">) {
       />
       <div className="grid gap-10 lg:grid-cols-[1fr_340px]">
         <div>
-          <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">
+          <p className="u-enter text-xs font-semibold tracking-[0.14em] text-accent uppercase">
             Pack de {formatDate(pack.week_start)}
           </p>
-          <h1 className="mt-3 font-display text-5xl leading-none font-bold uppercase sm:text-7xl">
+          <h1 className="u-enter u-enter-1 mt-3 font-display text-5xl leading-none font-bold uppercase sm:text-7xl">
             {pack.title}
           </h1>
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted">{pack.summary}</p>
+          <p className="u-enter u-enter-2 mt-5 max-w-2xl text-lg leading-relaxed text-muted">{pack.summary}</p>
 
-          <div className="mt-8 flex flex-wrap gap-3 text-xs font-semibold tracking-wide uppercase">
+          <div className="u-reveal mt-8 flex flex-wrap gap-3 text-xs font-semibold tracking-wide uppercase">
             <span className="border border-line bg-panel px-3 py-2">{pack.scripts_count} roteiros</span>
             <span className="border border-line bg-panel px-3 py-2">8 nichos</span>
             <span className="border border-line bg-panel px-3 py-2">hook + corpo + CTA + legenda</span>
@@ -100,7 +100,7 @@ async function PackDetail(props: PageProps<"/pack/[slug]">) {
           </div>
         </div>
 
-        <aside className="h-fit border border-accent bg-panel p-6 lg:sticky lg:top-6">
+        <aside className="u-card u-reveal h-fit border border-accent bg-panel p-6 lg:sticky lg:top-6">
           <p className="text-xs font-semibold tracking-wide text-accent uppercase">Pack completo</p>
           <p className="mt-3 font-display text-5xl font-bold">{formatPrice(pack.price_cents)}</p>
           {pack.compare_at_price_cents ? (
@@ -113,13 +113,13 @@ async function PackDetail(props: PageProps<"/pack/[slug]">) {
           </p>
           <Link
             href={`/checkout?kind=pack&slug=${pack.slug}`}
-            className="mt-6 block bg-accent px-6 py-4 text-center font-semibold text-white hover:opacity-90"
+            className="u-btn u-btn--primary u-btn--block mt-6 px-6"
           >
             Comprar pack
           </Link>
           <Link
             href="/planos"
-            className="mt-3 block border border-ink px-6 py-4 text-center text-sm font-semibold hover:bg-ink hover:text-white"
+            className="u-btn u-btn--outline u-btn--block mt-3 px-6 text-sm"
           >
             Ou assine e receba todos
           </Link>

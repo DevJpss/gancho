@@ -11,7 +11,7 @@ export default function ScriptCard({ script, index, locked = false }: Props) {
   const subnicheName = script.subniches?.name ?? "Subnicho";
 
   return (
-    <article className="border border-line bg-panel">
+    <article className="u-card u-reveal border border-line bg-panel">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
         <div className="flex flex-wrap items-center gap-2 text-xs font-semibold tracking-wide uppercase">
           <span className="bg-ink px-2 py-1 text-white">{nicheName}</span>

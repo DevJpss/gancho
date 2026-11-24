@@ -24,13 +24,13 @@ export default function Error({ retry }: Props) {
         <button
           type="button"
           onClick={retry}
-          className="inline-flex min-h-12 items-center bg-ink px-7 font-semibold text-white"
+          className="u-btn u-btn--dark px-7"
         >
           Tentar novamente
         </button>
         <Link
           href="/"
-          className="inline-flex min-h-12 items-center border-2 border-ink px-7 font-semibold"
+          className="u-btn u-btn--outline px-7"
         >
           Voltar ao início
         </Link>

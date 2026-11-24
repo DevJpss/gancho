@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Spinner from "@/components/Spinner";
 import { simulatePayment } from "@/app/pedido/[code]/actions";
 import type { ActionState } from "@/lib/types";
 
@@ -11,13 +12,15 @@ export default function SimulatePaymentButton({ code }: { code: string }) {
   });
 
   return (
-    <form action={formAction}>
+    <form action={formAction} aria-busy={pending}>
       <input type="hidden" name="code" value={code} />
       <button
         type="submit"
         disabled={pending}
-        className="bg-accent px-6 py-3 font-semibold text-white disabled:opacity-50"
+        aria-busy={pending}
+        className="u-btn u-btn--primary px-6"
       >
+        {pending ? <Spinner /> : null}
         {pending ? "Confirmando..." : "Simular pagamento aprovado"}
       </button>
       {state.message ? (

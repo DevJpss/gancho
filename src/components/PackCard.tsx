@@ -4,7 +4,7 @@ import type { Pack } from "@/lib/types";
 
 export default function PackCard({ pack, featured = false }: { pack: Pack; featured?: boolean }) {
   return (
-    <article className={`flex flex-col border border-line bg-panel p-6 ${featured ? "border-accent" : ""}`}>
+    <article className={`u-card u-reveal flex flex-col border border-line bg-panel p-6 ${featured ? "border-accent" : ""}`}>
       <div className="flex items-center justify-between gap-3 text-xs font-semibold tracking-wide uppercase">
         <span className="text-accent">
           {featured ? "Pack da semana" : "Arquivo"}
@@ -20,7 +20,7 @@ export default function PackCard({ pack, featured = false }: { pack: Pack; featu
         </div>
         <Link
           href={`/pack/${pack.slug}`}
-          className="bg-ink px-5 py-3 text-sm font-semibold text-white hover:bg-accent"
+          className="u-btn u-btn--dark px-5 text-sm"
         >
           Ver pack
         </Link>

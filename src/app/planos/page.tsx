@@ -17,8 +17,8 @@ export default async function PlanosPage() {
 
   return (
     <main className="px-4 py-14 sm:px-8 lg:px-16">
-      <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Planos</p>
-      <h1 className="mt-3 font-display text-6xl font-bold uppercase sm:text-7xl">
+      <p className="u-enter text-xs font-semibold tracking-[0.14em] text-accent uppercase">Planos</p>
+      <h1 className="u-enter u-enter-1 mt-3 font-display text-6xl font-bold uppercase sm:text-7xl">
         Escolha seu ritmo
       </h1>
       <p className="mt-4 max-w-2xl text-lg text-muted">
@@ -26,7 +26,7 @@ export default async function PlanosPage() {
       </p>
 
       <div className="mt-12 grid gap-6 md:grid-cols-2">
-        <article className="border border-line bg-panel p-8">
+        <article className="u-card u-reveal border border-line bg-panel p-8">
           <p className="text-xs font-semibold tracking-wide text-muted uppercase">Pagamento único</p>
           <h2 className="mt-2 font-display text-3xl font-bold uppercase">Pack avulso</h2>
           <p className="mt-5 font-display text-6xl font-bold">
@@ -39,13 +39,13 @@ export default async function PlanosPage() {
           </ul>
           <Link
             href={pack ? `/checkout?kind=pack&slug=${pack.slug}` : "/packs"}
-            className="mt-9 block bg-ink px-6 py-4 text-center font-semibold text-white hover:bg-accent"
+            className="u-btn u-btn--dark u-btn--block mt-9 px-6"
           >
             Comprar pack da semana
           </Link>
         </article>
 
-        <article className="border-2 border-accent bg-panel p-8">
+        <article className="u-card u-reveal border-2 border-accent bg-panel p-8">
           <p className="text-xs font-semibold tracking-wide text-accent uppercase">Assinatura mensal</p>
           <h2 className="mt-2 font-display text-3xl font-bold uppercase">
             {plan?.name ?? "Gancho Pro"}
@@ -61,7 +61,7 @@ export default async function PlanosPage() {
           </ul>
           <Link
             href={`/checkout?kind=subscription&slug=${plan?.slug ?? "pro"}`}
-            className="mt-9 block bg-accent px-6 py-4 text-center font-semibold text-white hover:opacity-90"
+            className="u-btn u-btn--primary u-btn--block mt-9 px-6"
           >
             Assinar agora
           </Link>

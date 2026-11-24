@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Spinner from "@/components/Spinner";
 import { triggerGeneration } from "@/app/admin/(protected)/geracao/actions";
 
 export default function GenerateButton() {
@@ -12,13 +13,15 @@ export default function GenerateButton() {
       <button
         type="button"
         disabled={pending}
+        aria-busy={pending}
         onClick={() =>
           startTransition(async () => {
             setResult(await triggerGeneration());
           })
         }
-        className="bg-accent px-6 py-3 text-sm font-semibold text-white disabled:opacity-50"
+        className="u-btn u-btn--primary px-6 text-sm"
       >
+        {pending ? <Spinner /> : null}
         {pending ? "Gerando (pode levar minutos)..." : "Gerar pack desta semana agora"}
       </button>
       {result ? (

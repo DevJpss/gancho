@@ -17,8 +17,8 @@ export default async function PacksPage() {
 
   return (
     <main className="px-4 py-14 sm:px-8 lg:px-16">
-      <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Biblioteca</p>
-      <h1 className="mt-3 font-display text-6xl font-bold uppercase sm:text-7xl">
+      <p className="u-enter text-xs font-semibold tracking-[0.14em] text-accent uppercase">Biblioteca</p>
+      <h1 className="u-enter u-enter-1 mt-3 font-display text-6xl font-bold uppercase sm:text-7xl">
         Packs publicados
       </h1>
       <p className="mt-4 max-w-2xl text-muted">
@@ -33,7 +33,7 @@ export default async function PacksPage() {
           ))}
         </div>
       ) : (
-        <div className="mt-12 border border-line bg-panel p-8">
+        <div className="u-card u-reveal mt-12 border border-line bg-panel p-8">
           <p className="font-semibold">Nenhum pack publicado ainda.</p>
           <p className="mt-2 text-sm text-muted">
             O primeiro pack é gerado automaticamente pelo job de segunda-feira.
@@ -42,7 +42,7 @@ export default async function PacksPage() {
       )}
 
       <p className="mt-12 text-sm text-muted">
-        Prefere receber todos? <Link href="/planos" className="font-semibold text-accent underline underline-offset-4">Ver planos</Link>
+        Prefere receber todos? <Link href="/planos" className="u-link font-semibold text-accent underline underline-offset-4">Ver planos</Link>
       </p>
     </main>
   );

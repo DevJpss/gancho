@@ -52,13 +52,13 @@ export default async function AdminHome() {
       </section>
 
       <div className="flex flex-wrap gap-4 text-sm font-semibold">
-        <Link href="/admin/packs" className="border border-ink px-5 py-3 hover:bg-ink hover:text-white">
+        <Link href="/admin/packs" className="u-btn u-btn--outline px-5 text-sm">
           Ver packs
         </Link>
-        <Link href="/admin/pedidos" className="border border-ink px-5 py-3 hover:bg-ink hover:text-white">
+        <Link href="/admin/pedidos" className="u-btn u-btn--outline px-5 text-sm">
           Ver pedidos
         </Link>
-        <Link href="/admin/geracao" className="bg-accent px-5 py-3 text-white hover:opacity-90">
+        <Link href="/admin/geracao" className="u-btn u-btn--primary px-5 text-sm">
           Configurar geração
         </Link>
       </div>

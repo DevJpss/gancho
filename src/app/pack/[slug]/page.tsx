@@ -9,7 +9,7 @@ import { FREE_PREVIEW_COUNT, absoluteUrl } from "@/lib/site";
 
 export async function generateStaticParams() {
   const packs = await getPacks();
-  return packs.map((pack) => ({ slug: pack.slug }));
+  return packs.length ? packs.map((pack) => ({ slug: pack.slug })) : [{ slug: "__placeholder__" }];
 }
 
 export async function generateMetadata(props: PageProps<"/pack/[slug]">): Promise<Metadata> {

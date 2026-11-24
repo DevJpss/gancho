@@ -20,14 +20,17 @@ plano pago; quando algum limite apertar, a troca é só de variável de ambiente
 ```env
 AI_API_KEY=sua-chave-aqui
 AI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai
-AI_WRITER_MODEL=gemini-4-hydrogen
-AI_JUDGE_MODEL=gemini-4-hydrogen
+AI_WRITER_MODEL=gemini-flash-lite-latest
+AI_JUDGE_MODEL=gemini-3.1-flash-lite
+AI_FALLBACK_MODELS=gemini-3.1-flash-lite,gemini-flash-lite-latest
 AI_REVIEW_THRESHOLD=80
 ```
 
-`gemini-4-hydrogen` está no free tier para requisições padrão: tokens de entrada e
-saída gratuitos. O jurado roda em uma chamada separada, com outra persona e temperatura
-baixa, para não ser uma simples autoavaliação.
+`gemini-flash-lite-latest` é rápido e funciona bem como roteirista. O jurado usa
+`gemini-3.1-flash-lite`, outro modelo, em uma chamada separada com outra persona e temperatura
+baixa, para não ser uma simples autoavaliação. Se algum modelo estiver com demanda alta,
+o job tenta automaticamente os modelos de `AI_FALLBACK_MODELS` em caso de 429/503. Ambos
+são rápidos e foram testados no free tier.
 
 Limites: RPM/TPM/RPD variam por projeto e aparecem em
 https://aistudio.google.com/rate-limit. O job semanal faz poucas chamadas e cabe

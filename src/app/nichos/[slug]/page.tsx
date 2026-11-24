@@ -6,7 +6,7 @@ import { absoluteUrl } from "@/lib/site";
 
 export async function generateStaticParams() {
   const niches = await getNiches();
-  return niches.map((niche) => ({ slug: niche.slug }));
+  return niches.length ? niches.map((niche) => ({ slug: niche.slug })) : [{ slug: "__placeholder__" }];
 }
 
 export async function generateMetadata(props: PageProps<"/nichos/[slug]">): Promise<Metadata> {

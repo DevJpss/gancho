@@ -82,9 +82,10 @@ publicados, `sinais` de packs publicados e `plans` ativos. Todo o resto é `serv
 - **Fontes de notícia:** RSS público pode mudar de formato; o coletor falha de forma isolada
   por nicho e o job continua.
 - **Custo da IA:** 2 a 4 chamadas por nicho por semana (roteirista, jurado, reescrita opcional e
-  segundo julgamento), com 1 retentativa por chamada. No início, `gemini-4-hydrogen` (free tier)
-  e `openrouter/free` custam R$ 0. Se precisar de mais rigor, troque `AI_JUDGE_MODEL` para um
-  modelo pago; `AI_REVIEW_THRESHOLD` controla a severidade. Detalhes em `COMECO-GRATIS.md`.
+  segundo julgamento), com retentativas e fallback entre modelos em 429/503. No início,
+  `gemini-flash-lite-latest` e `gemini-3.1-flash-lite` (free tier) e `openrouter/free` custam
+  R$ 0. Se precisar de mais rigor, troque `AI_JUDGE_MODEL` para um modelo pago;
+  `AI_REVIEW_THRESHOLD` controla a severidade. Detalhes em `COMECO-GRATIS.md`.
 - **Jurídico:** termos/privacidade são rascunhos. Revisar com contador/advogado antes de vender.
 - **Cobrança recorrente:** testar preapproval com valor baixo e conferir cancelamento.
 

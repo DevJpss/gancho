@@ -52,8 +52,9 @@ Env vars:
 |---|---|
 | `AI_API_KEY` | Obrigatória para gerar; chave do Gemini (grátis) em https://aistudio.google.com/apikey |
 | `AI_BASE_URL` | Padrão `https://generativelanguage.googleapis.com/v1beta/openai`; aceita OpenRouter/OpenAI/etc. |
-| `AI_WRITER_MODEL` | Roteirista; padrão gratuito `gemini-4-hydrogen` |
-| `AI_JUDGE_MODEL` | Jurado; usa `AI_WRITER_MODEL` se omitido |
+| `AI_WRITER_MODEL` | Roteirista; padrão gratuito `gemini-flash-lite-latest` |
+| `AI_JUDGE_MODEL` | Jurado; usa `AI_WRITER_MODEL` se omitido; recomendado `gemini-3.1-flash-lite` |
+| `AI_FALLBACK_MODELS` | Modelos alternativos em 429/503; padrão `gemini-3.6-flash,gemini-3.5-flash,gemini-3.1-flash-lite,gemini-flash-lite-latest` |
 | `AI_REVIEW_THRESHOLD` | Nota mínima para aprovar sem reescrita; padrão `80` |
 | `CRON_SECRET` | Protege o endpoint do job |
 | `NEWS_LOCALE`, `NEWS_REGION`, `NEWS_LANGUAGE` | Google News RSS (padrão pt-BR/BR) |
@@ -88,8 +89,9 @@ O botão em `/admin/geracao` dispara o mesmo endpoint manualmente.
 | Variável | Uso |
 |---|---|
 | `PAYMENT_MODE` | `demo` (padrão) ou `live` |
-| `MERCADO_PAGO_ACCESS_TOKEN` | Necessário em `live` |
-| `MERCADO_PAGO_WEBHOOK_SECRET` | Valida a assinatura HMAC |
+| `NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY` | Public key `APP_USR-...` (referência; o checkout usa `init_point`) |
+| `MERCADO_PAGO_ACCESS_TOKEN` | Access token `APP_USR-...`, necessário em `live` |
+| `MERCADO_PAGO_WEBHOOK_SECRET` | Segredo da assinatura HMAC do webhook |
 | `NEXT_PUBLIC_SITE_URL` | Usada em `back_urls` e no disparo manual do cron |
 
 - **Pack avulso:** Pix (QR Code) ou cartão (preference).

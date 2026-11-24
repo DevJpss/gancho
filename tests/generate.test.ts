@@ -10,6 +10,8 @@ import {
   pickBestBatch,
 } from "../src/lib/ai/generate";
 import {
+  flexibleGeneratedBatchSchema,
+  flexibleReviewBatchSchema,
   reviewBatchSchema,
   type GeneratedBatch,
   type ReviewBatch,
@@ -297,5 +299,66 @@ test("refaz a chamada sem response_format quando o provedor rejeita", async () =
       if (value === undefined) delete process.env[key];
       else process.env[key] = value;
     }
+  }
+});
+
+test("normaliza hashtags e notas que vêm como texto do modelo", () => {
+  const batch = flexibleGeneratedBatchSchema.safeParse({
+    scripts: [
+      {
+        ...script("Organização financeira sem complicação", 90),
+        hashtags: "#financas, #organizacao, #rendaextra",
+        score: "88",
+        duration_seconds: "42",
+      },
+    ],
+  });
+  assert.equal(batch.success, true);
+  if (!batch.success) return;
+  assert.deepEqual(batch.data.scripts[0].hashtags, ["financas", "organizacao", "rendaextra"]);
+  assert.equal(batch.data.scripts[0].score, 88);
+  assert.equal(batch.data.scripts[0].duration_seconds, 42);
+
+  const reviews = flexibleReviewBatchSchema.safeParse({
+    reviews: [{ index: "0", score: "82", verdict: "aprovar", problems: "", fix: "" }],
+  });
+  assert.equal(reviews.success, true);
+  if (!reviews.success) return;
+  assert.equal(reviews.data.reviews[0].index, 0);
+  assert.equal(reviews.data.reviews[0].score, 82);
+});
+
+test("completa título curto com o nome do subnicho", async () => {
+  const originalFetch = globalThis.fetch;
+  process.env.AI_API_KEY = "teste";
+
+  const batch = { scripts: [{ ...script("IR", 90), title: "IR" }] };
+  const approval = { reviews: [review(0, 90, "aprovar")] };
+  let calls = 0;
+
+  globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+    calls += 1;
+    const payload = JSON.parse(String(init?.body ?? "{}")) as {
+      messages?: Array<{ content?: string }>;
+    };
+    const prompt = payload.messages?.map((message) => message.content ?? "").join(" ") ?? "";
+    const content = /roteirista sênior/i.test(prompt) ? batch : approval;
+    return new Response(
+      JSON.stringify({ choices: [{ message: { content: JSON.stringify(content) } }] }),
+      { status: 200, headers: { "content-type": "application/json" } },
+    );
+  }) as typeof fetch;
+
+  try {
+    const result = await generateScriptsForNiche({
+      nicheName: "Finanças",
+      subniches: [{ name: "Imposto de renda", slug: "imposto-de-renda" }],
+      signals: [],
+      weekStart: "2026-11-23",
+    });
+    assert.equal(result.scripts[0].title, "Imposto de renda: IR");
+  } finally {
+    globalThis.fetch = originalFetch;
+    delete process.env.AI_API_KEY;
   }
 });

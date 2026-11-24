@@ -1,7 +1,7 @@
-import type { z } from "zod";
+import { z } from "zod";
 import {
-  generatedBatchSchema,
-  reviewBatchSchema,
+  flexibleGeneratedBatchSchema,
+  flexibleReviewBatchSchema,
   type GeneratedBatch,
   type ReviewBatch,
   type TrendSignal,
@@ -43,22 +43,37 @@ Responda APENAS com um objeto JSON válido, sem comentários e sem markdown, no 
 Use indexes começando em 0, um review por roteiro, na mesma ordem recebida.`;
 
 /**
- * Stack gratuita por padrão: Gemini 4 Hydrogen (sem cartão, free tier).
+ * Stack gratuita por padrão: Gemini Flash-Lite (sem cartão, free tier).
+ * O jurado pode usar outro modelo configurável em AI_JUDGE_MODEL.
  * As variáveis OPENAI_* continuam funcionando para quem já as configurou.
  */
 export const DEFAULT_AI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai";
-export const DEFAULT_AI_WRITER_MODEL = "gemini-4-hydrogen";
+export const DEFAULT_AI_WRITER_MODEL = "gemini-flash-lite-latest";
 export const DEFAULT_AI_JUDGE_MODEL = DEFAULT_AI_WRITER_MODEL;
 export const DEFAULT_REVIEW_THRESHOLD = 80;
+
+export const DEFAULT_AI_FALLBACK_MODELS = [
+  "gemini-3.6-flash",
+  "gemini-3.5-flash",
+  "gemini-3.1-flash-lite",
+  "gemini-flash-lite-latest",
+];
 
 export type AiConfig = {
   apiKey: string;
   baseUrl: string;
   writerModel: string;
   judgeModel: string;
+  fallbackModels: string[];
 };
 
 export function getAiConfig(): AiConfig {
+  const fallbacks = process.env.AI_FALLBACK_MODELS
+    ? process.env.AI_FALLBACK_MODELS.split(",")
+        .map((model) => model.trim())
+        .filter(Boolean)
+    : DEFAULT_AI_FALLBACK_MODELS;
+
   return {
     apiKey: process.env.AI_API_KEY ?? process.env.OPENAI_API_KEY ?? "",
     baseUrl: (
@@ -74,6 +89,7 @@ export function getAiConfig(): AiConfig {
       process.env.AI_WRITER_MODEL ??
       process.env.OPENAI_MODEL ??
       DEFAULT_AI_JUDGE_MODEL,
+    fallbackModels: fallbacks,
   };
 }
 
@@ -133,49 +149,97 @@ async function postCompletion(url: string, apiKey: string, body: object): Promis
   return response;
 }
 
+const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504]);
+
 async function requestJson<T>(options: JsonRequest<T>): Promise<T> {
   const config = getAiConfig();
   if (!config.apiKey) {
     throw new Error("Chave de IA não configurada. Defina AI_API_KEY no .env.local.");
   }
 
-  const response = await postCompletion(`${config.baseUrl}/chat/completions`, config.apiKey, {
-    model: options.model,
+  const body = {
     temperature: options.temperature,
     messages: [
       { role: "system", content: options.system },
       { role: "user", content: options.user },
       ...(options.correction ? [{ role: "user" as const, content: options.correction }] : []),
     ],
-  });
+  };
 
-  if (!response.ok) {
-    const detail = await response.text();
-    throw new Error(`IA ${response.status}: ${detail.slice(0, 300)}`);
+  const models = [options.model, ...config.fallbackModels.filter((model) => model !== options.model)];
+  let lastStatus = 0;
+  let lastDetail = "";
+
+  for (const model of models) {
+    const response = await postCompletion(`${config.baseUrl}/chat/completions`, config.apiKey, {
+      ...body,
+      model,
+    });
+
+    if (RETRYABLE_STATUS.has(response.status)) {
+      lastStatus = response.status;
+      lastDetail = (await response.text()).slice(0, 300);
+      continue;
+    }
+
+    if (!response.ok) {
+      const detail = await response.text();
+      throw new Error(`IA ${response.status}: ${detail.slice(0, 300)}`);
+    }
+
+    const payload = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    const content = payload.choices?.[0]?.message?.content;
+    if (!content) throw new Error("A IA não retornou conteúdo.");
+
+    const parsed = options.schema.parse(JSON.parse(unwrapJson(content)));
+    options.validate?.(parsed);
+    return parsed;
   }
 
-  const payload = (await response.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
-  };
-  const content = payload.choices?.[0]?.message?.content;
-  if (!content) throw new Error("A IA não retornou conteúdo.");
+  throw new Error(`IA ${lastStatus}: ${lastDetail}`);
+}
 
-  const parsed = options.schema.parse(JSON.parse(unwrapJson(content)));
-  options.validate?.(parsed);
-  return parsed;
+function describeAiError(error: unknown): string {
+  if (error instanceof z.ZodError) {
+    return error.issues
+      .map((issue) => `${issue.path.join(".") || "resposta"}: ${issue.message}`)
+      .join("; ")
+      .slice(0, 700);
+  }
+  return error instanceof Error ? error.message.slice(0, 400) : "formato inválido";
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function requestJsonWithRetry<T>(
   options: Omit<JsonRequest<T>, "correction">,
   retryMessage: (detail: string) => string,
 ): Promise<T> {
-  try {
-    return await requestJson(options);
-  } catch (error) {
-    if (!isAiConfigured()) throw error;
-    const detail = error instanceof Error ? error.message : "formato inválido";
-    return requestJson({ ...options, correction: retryMessage(detail) });
+  let lastError: unknown;
+  let correction: string | undefined;
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await requestJson({ ...options, correction });
+    } catch (error) {
+      lastError = error;
+      if (!isAiConfigured()) throw error;
+      if (attempt === 2) break;
+
+      const detail = describeAiError(error);
+      if (/\b(429|500|502|503|504)\b/.test(detail)) {
+        await sleep(800 * (attempt + 1));
+      } else {
+        correction = retryMessage(detail);
+      }
+    }
   }
+
+  throw lastError;
 }
 
 function assertBatchSize(batch: GeneratedBatch, expected: number): void {
@@ -199,13 +263,14 @@ async function requestGeneratedBatch(userPrompt: string, expected: number): Prom
     {
       system: WRITER_SYSTEM_PROMPT,
       user: userPrompt,
-      schema: generatedBatchSchema,
+      schema: flexibleGeneratedBatchSchema,
       temperature: 0.8,
       model: getAiConfig().writerModel,
       validate: (batch) => assertBatchSize(batch, expected),
     },
     (detail) =>
-      `A resposta anterior falhou na validação (${detail.slice(0, 200)}). Retorne novamente apenas o JSON válido, com ${expected} scripts na mesma ordem.`,
+      `A resposta anterior falhou na validação: ${detail}. Corrija EXATAMENTE esses campos e devolva o JSON completo com ${expected} scripts na mesma ordem. ` +
+      `Respeite os mínimos: title com 8+ caracteres citando o subnicho, hook 20+, body 80+ com blocos [0s]/[8s]/[18s]/[30s], cta 10+, caption 20+, de 3 a 8 hashtags sem "#".`,
   );
 }
 
@@ -226,13 +291,14 @@ Avalie ${expected} roteiros. Retorne {"reviews":[{"index":0,"score":0,"verdict":
     {
       system: JUDGE_SYSTEM_PROMPT,
       user,
-      schema: reviewBatchSchema,
+      schema: flexibleReviewBatchSchema,
       temperature: 0.2,
       model: getAiConfig().judgeModel,
       validate: (reviews) => assertReviewsCoverBatch(reviews, expected),
     },
     (detail) =>
-      `A avaliação anterior falhou na validação (${detail.slice(0, 200)}). Retorne apenas o JSON válido, com ${expected} reviews, indexes de 0 a ${expected - 1}, um por roteiro.`,
+      `A avaliação anterior falhou na validação: ${detail}. Retorne apenas o JSON válido com ${expected} reviews, ` +
+      `indexes inteiros de 0 a ${expected - 1} (um por roteiro, sem repetir), score de 0 a 100 e verdict exatamente "aprovar" ou "revisar".`,
   );
 }
 
@@ -302,11 +368,23 @@ ${signalsText}`;
 Escreva ${input.subniches.length} scripts. O campo "title" deve citar o subnicho correspondente.
 Retorne: {"scripts":[{"title","hook","body","cta","caption","hashtags","duration_seconds","score"}]}`;
 
+  // Títulos curtos são corrigidos aqui, sem depender de outra ida ao modelo.
+  const normalizeTitles = (batch: GeneratedBatch): GeneratedBatch => ({
+    scripts: batch.scripts.map((script, index) => {
+      const subniche = input.subniches[index]?.name ?? "";
+      let title = script.title.trim();
+      if (title.length < 8 && subniche) {
+        title = `${subniche}: ${title}`.trim();
+      }
+      return { ...script, title: title.slice(0, 140) };
+    }),
+  });
+
   const draft = await requestGeneratedBatch(draftPrompt, input.subniches.length);
   const firstReview = await judgeBatch(draft, contextText, input.subniches.length);
 
   if (!needsRevision(firstReview)) {
-    return pickBestBatch({ batch: draft, reviews: firstReview });
+    return normalizeTitles(pickBestBatch({ batch: draft, reviews: firstReview }));
   }
 
   const rewritePrompt = `${contextText}
@@ -329,8 +407,10 @@ Regras da reescrita:
   const revision = await requestGeneratedBatch(rewritePrompt, input.subniches.length);
   const secondReview = await judgeBatch(revision, contextText, input.subniches.length);
 
-  return pickBestBatch(
-    { batch: draft, reviews: firstReview },
-    { batch: revision, reviews: secondReview },
+  return normalizeTitles(
+    pickBestBatch(
+      { batch: draft, reviews: firstReview },
+      { batch: revision, reviews: secondReview },
+    ),
   );
 }

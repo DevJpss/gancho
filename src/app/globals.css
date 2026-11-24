@@ -18,12 +18,32 @@
 
 html {
   scroll-behavior: smooth;
+  /* Âncoras não colam na borda e a barra não rouba largura ao aparecer. */
+  scroll-padding-top: 5rem;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
 }
 
 body {
   background: var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-body-face), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border: 3px solid var(--color-canvas);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
 }
 
 ::selection {
@@ -93,12 +113,28 @@ body {
   animation-delay: 210ms;
 }
 
-/* Revelação no scroll, apenas onde o navegador suporta scroll-driven CSS. */
+/* Revelação no scroll: entra subindo, descansa e sai subindo ao deixar a tela. */
+@keyframes u-scroll-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  14%,
+  82% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+
 @supports (animation-timeline: view()) {
   .u-reveal {
-    animation: u-rise linear both;
+    animation: u-scroll-fade linear both;
     animation-timeline: view();
-    animation-range: entry 4% cover 24%;
+    animation-range: entry 0% exit 100%;
   }
 }
 
@@ -319,6 +355,40 @@ details {
   animation: none;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Progresso de leitura — scroll-driven, sem JavaScript                        */
+/* -------------------------------------------------------------------------- */
+
+.u-scroll-progress {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 40;
+  width: 100%;
+  height: 3px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+@keyframes u-scroll-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@supports (animation-timeline: scroll()) {
+  .u-scroll-progress {
+    animation: u-scroll-progress linear both;
+    animation-timeline: scroll();
+  }
+}
+
+@supports not (animation-timeline: scroll()) {
+  .u-scroll-progress {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),
@@ -349,7 +419,8 @@ details {
   }
 
   .u-ticker::after,
-  .u-spinner {
+  .u-spinner,
+  .u-scroll-progress {
     display: none;
   }
 }

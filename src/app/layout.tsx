@@ -75,6 +75,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${display.variable} ${body.variable}`}
     >
       <body className="flex min-h-screen flex-col">
+        <div className="u-scroll-progress" aria-hidden="true" />
         <a
           href="#conteudo"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:text-ink"

@@ -26,6 +26,9 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
+  verification: {
+    google: "au-c8oHQfNOh64MFBXrCXxXRVlLym-ScrhvOjNhza-A",
+  },
   openGraph: {
     type: "website",
     locale: "pt_BR",

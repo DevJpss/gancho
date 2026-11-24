@@ -328,21 +328,24 @@ test("normaliza hashtags e notas que vêm como texto do modelo", () => {
   assert.equal(reviews.data.reviews[0].score, 82);
 });
 
-test("completa título curto com o nome do subnicho", async () => {
+test("rejeita título genérico e usa a versão corrigida pelo modelo", async () => {
   const originalFetch = globalThis.fetch;
   process.env.AI_API_KEY = "teste";
 
-  const batch = { scripts: [{ ...script("IR", 90), title: "IR" }] };
+  const tituloBom = "Imposto de renda: 5 comprovantes que ninguém guarda";
+  const ruim = { scripts: [{ ...script("IR", 90), title: "IR" }] };
+  const bom = { scripts: [{ ...script(tituloBom, 90) }] };
   const approval = { reviews: [review(0, 90, "aprovar")] };
-  let calls = 0;
+  let writerCalls = 0;
 
   globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
-    calls += 1;
     const payload = JSON.parse(String(init?.body ?? "{}")) as {
       messages?: Array<{ content?: string }>;
     };
     const prompt = payload.messages?.map((message) => message.content ?? "").join(" ") ?? "";
-    const content = /roteirista sênior/i.test(prompt) ? batch : approval;
+    const isWriter = /roteirista sênior/i.test(prompt);
+    if (isWriter) writerCalls += 1;
+    const content = isWriter ? (writerCalls === 1 ? ruim : bom) : approval;
     return new Response(
       JSON.stringify({ choices: [{ message: { content: JSON.stringify(content) } }] }),
       { status: 200, headers: { "content-type": "application/json" } },
@@ -356,7 +359,8 @@ test("completa título curto com o nome do subnicho", async () => {
       signals: [],
       weekStart: "2026-11-23",
     });
-    assert.equal(result.scripts[0].title, "Imposto de renda: IR");
+    assert.equal(writerCalls, 2);
+    assert.equal(result.scripts[0].title, tituloBom);
   } finally {
     globalThis.fetch = originalFetch;
     delete process.env.AI_API_KEY;

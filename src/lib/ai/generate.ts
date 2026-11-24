@@ -12,6 +12,7 @@ Você recebe um nicho, seus subnichos e manchetes reais da semana. Escreva UM sc
 
 Regras obrigatórias:
 - Escreva para gente comum, com frases curtas e voz falada. Sem jargão de marketing.
+- "title" é o título da publicação: atrativo, específico, com um ângulo ou pergunta concreta (12 a 90 caracteres). Cite o subnicho, mas NUNCA use só o nome dele nem repita "Subnicho: Subnicho". Ruim: "Investimentos". Bom: "Investimentos: 3 erros que derrubam seu rendimento".
 - "hook" é a primeira frase dita em câmera: 1 ou 2 linhas, que seguram o scroll sem clickbait fraudulento.
 - "body" deve conter marcações de tempo no início de cada bloco, assim: [0s], [8s], [18s], [30s]. Entre 4 e 6 blocos.
 - "cta" é um convite único e específico no final. Não prometa resultado, sorteio ou milagre.
@@ -27,6 +28,7 @@ Regras obrigatórias:
 const JUDGE_SYSTEM_PROMPT = `Você é uma editora sênior independente de conteúdo curto. Você NÃO escreveu estes roteiros: recebeu uma versão anônima só para julgar. Seja uma leitora exigente, desconfiada e específica.
 
 Avalie cada roteiro por esta rubrica:
+- Título: atrativo e específico, com ângulo concreto — nunca apenas o nome do subnicho.
 - Hook: segura o scroll nos primeiros 2 segundos sem promessa falsa ou clickbait.
 - Corpo: soa falado, tem marcações de tempo coerentes, evolui em vez de repetir a mesma frase.
 - CTA: único, específico e sem prometer milagre, dinheiro fácil, cura ou aprovação.
@@ -248,6 +250,16 @@ function assertBatchSize(batch: GeneratedBatch, expected: number): void {
   }
 }
 
+function assertTitles(batch: GeneratedBatch, subnicheNames: string[]): void {
+  batch.scripts.forEach((script, index) => {
+    const name = subnicheNames[index]?.trim().toLowerCase() ?? "";
+    const title = script.title.trim().toLowerCase();
+    if (name && (title === name || title === `${name}: ${name}` || title.length < 12)) {
+      throw new Error(`title do script ${index} é genérico: "${script.title}"`);
+    }
+  });
+}
+
 function assertReviewsCoverBatch(reviews: ReviewBatch, expected: number): void {
   if (reviews.reviews.length !== expected) {
     throw new Error(`O jurado avaliou ${reviews.reviews.length} roteiros; esperava ${expected}.`);
@@ -258,7 +270,11 @@ function assertReviewsCoverBatch(reviews: ReviewBatch, expected: number): void {
   }
 }
 
-async function requestGeneratedBatch(userPrompt: string, expected: number): Promise<GeneratedBatch> {
+async function requestGeneratedBatch(
+  userPrompt: string,
+  expected: number,
+  subnicheNames: string[],
+): Promise<GeneratedBatch> {
   return requestJsonWithRetry(
     {
       system: WRITER_SYSTEM_PROMPT,
@@ -266,11 +282,15 @@ async function requestGeneratedBatch(userPrompt: string, expected: number): Prom
       schema: flexibleGeneratedBatchSchema,
       temperature: 0.8,
       model: getAiConfig().writerModel,
-      validate: (batch) => assertBatchSize(batch, expected),
+      validate: (batch) => {
+        assertBatchSize(batch, expected);
+        assertTitles(batch, subnicheNames);
+      },
     },
     (detail) =>
       `A resposta anterior falhou na validação: ${detail}. Corrija EXATAMENTE esses campos e devolva o JSON completo com ${expected} scripts na mesma ordem. ` +
-      `Respeite os mínimos: title com 8+ caracteres citando o subnicho, hook 20+, body 80+ com blocos [0s]/[8s]/[18s]/[30s], cta 10+, caption 20+, de 3 a 8 hashtags sem "#".`,
+      `O "title" deve ser um título atrativo de 12+ caracteres com um ângulo concreto, nunca apenas o nome do subnicho. ` +
+      `Respeite também: hook 20+, body 80+ com blocos [0s]/[8s]/[18s]/[30s], cta 10+, caption 20+, de 3 a 8 hashtags sem "#".`,
   );
 }
 
@@ -365,7 +385,7 @@ ${signalsText}`;
 
   const draftPrompt = `${contextText}
 
-Escreva ${input.subniches.length} scripts. O campo "title" deve citar o subnicho correspondente.
+Escreva ${input.subniches.length} scripts. Cada "title" deve ser um título atrativo, com um ângulo ou pergunta concreta, que cite o subnicho correspondente — NUNCA apenas o nome do subnicho.
 Retorne: {"scripts":[{"title","hook","body","cta","caption","hashtags","duration_seconds","score"}]}`;
 
   // Títulos curtos são corrigidos aqui, sem depender de outra ida ao modelo.
@@ -380,7 +400,11 @@ Retorne: {"scripts":[{"title","hook","body","cta","caption","hashtags","duration
     }),
   });
 
-  const draft = await requestGeneratedBatch(draftPrompt, input.subniches.length);
+  const draft = await requestGeneratedBatch(
+    draftPrompt,
+    input.subniches.length,
+    input.subniches.map((sub) => sub.name),
+  );
   const firstReview = await judgeBatch(draft, contextText, input.subniches.length);
 
   if (!needsRevision(firstReview)) {
@@ -404,7 +428,11 @@ Regras da reescrita:
 - Não invente fatos, números ou nomes que não estejam nas manchetes acima.
 - Retorne APENAS o JSON completo do lote final, no mesmo formato: {"scripts":[...]}`;
 
-  const revision = await requestGeneratedBatch(rewritePrompt, input.subniches.length);
+  const revision = await requestGeneratedBatch(
+    rewritePrompt,
+    input.subniches.length,
+    input.subniches.map((sub) => sub.name),
+  );
   const secondReview = await judgeBatch(revision, contextText, input.subniches.length);
 
   return normalizeTitles(

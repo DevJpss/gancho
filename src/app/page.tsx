@@ -1,8 +1,11 @@
 import Link from "next/link";
 import ScriptCard from "@/components/ScriptCard";
+import PageTransition from "@/components/PageTransition";
 import { getLatestPack, getNiches, getPlans, getScriptsByPack } from "@/lib/catalog";
 import { formatPrice, formatWeekRange } from "@/lib/format";
 import { COMPARISON_PRICE_CENTS, DEFAULT_PACK_PRICE_CENTS } from "@/lib/site";
+
+const forward = ["nav-forward"];
 
 const steps = [
   {
@@ -55,7 +58,7 @@ export default async function HomePage() {
   const plan = plans[0];
 
   return (
-    <main>
+    <PageTransition>
       <section className="u-grid border-b border-line px-4 py-16 sm:px-8 sm:py-24 lg:px-16">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="u-enter">
@@ -76,12 +79,14 @@ export default async function HomePage() {
             <div className="mt-9 flex flex-wrap gap-3">
               <Link
                 href={pack ? `/pack/${pack.slug}` : "/packs"}
+                transitionTypes={forward}
                 className="u-btn u-btn--primary px-7"
               >
                 Ver pack da semana
               </Link>
               <Link
                 href="/planos"
+                transitionTypes={forward}
                 className="u-btn u-btn--outline px-7"
               >
                 Ver assinatura
@@ -144,7 +149,7 @@ export default async function HomePage() {
                 Pronto para gravar hoje
               </h2>
             </div>
-            <Link href={`/pack/${pack.slug}`} className="u-link font-semibold text-accent underline underline-offset-4">
+            <Link href={`/pack/${pack.slug}`} transitionTypes={forward} className="u-link font-semibold text-accent underline underline-offset-4">
               Ver todos os {pack.scripts_count} roteiros →
             </Link>
           </div>
@@ -160,6 +165,7 @@ export default async function HomePage() {
             </div>
             <Link
               href={`/checkout?kind=pack&slug=${pack.slug}`}
+              transitionTypes={forward}
               className="u-btn u-btn--primary px-7"
             >
               Comprar pack avulso
@@ -215,6 +221,7 @@ export default async function HomePage() {
             </ul>
             <Link
               href={pack ? `/checkout?kind=pack&slug=${pack.slug}` : "/packs"}
+              transitionTypes={forward}
               className="u-btn u-btn--dark u-btn--block mt-8 px-6"
             >
               Comprar avulso
@@ -236,6 +243,7 @@ export default async function HomePage() {
             </ul>
             <Link
               href={`/checkout?kind=subscription&slug=${plan?.slug ?? "pro"}`}
+              transitionTypes={forward}
               className="u-btn u-btn--primary u-btn--block mt-8 px-6"
             >
               Assinar
@@ -257,6 +265,6 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
-    </main>
+    </PageTransition>
   );
 }

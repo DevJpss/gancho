@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import PageTransition from "@/components/PageTransition";
 import { getLatestPack, getPlans } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { COMPARISON_PRICE_CENTS, DEFAULT_PACK_PRICE_CENTS, absoluteUrl } from "@/lib/site";
+
+const forward = ["nav-forward"];
 
 export const metadata: Metadata = {
   title: "Planos",
@@ -16,7 +19,7 @@ export default async function PlanosPage() {
   const plan = plans[0];
 
   return (
-    <main className="px-4 py-14 sm:px-8 lg:px-16">
+    <PageTransition className="px-4 py-14 sm:px-8 lg:px-16">
       <p className="u-enter text-xs font-semibold tracking-[0.14em] text-accent uppercase">Planos</p>
       <h1 className="u-enter u-enter-1 mt-3 font-display text-6xl font-bold uppercase sm:text-7xl">
         Escolha seu ritmo
@@ -39,6 +42,7 @@ export default async function PlanosPage() {
           </ul>
           <Link
             href={pack ? `/checkout?kind=pack&slug=${pack.slug}` : "/packs"}
+            transitionTypes={forward}
             className="u-btn u-btn--dark u-btn--block mt-9 px-6"
           >
             Comprar pack da semana
@@ -61,6 +65,7 @@ export default async function PlanosPage() {
           </ul>
           <Link
             href={`/checkout?kind=subscription&slug=${plan?.slug ?? "pro"}`}
+            transitionTypes={forward}
             className="u-btn u-btn--primary u-btn--block mt-9 px-6"
           >
             Assinar agora
@@ -75,6 +80,6 @@ export default async function PlanosPage() {
         Para comparação: assinaturas de ferramentas de IA para criação custam em torno de{" "}
         {formatPrice(COMPARISON_PRICE_CENTS)}/mês. Aqui o foco é só o roteiro pronto.
       </p>
-    </main>
+    </PageTransition>
   );
 }

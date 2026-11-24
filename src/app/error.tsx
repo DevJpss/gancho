@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 
+const back = ["nav-back"];
+
 type Props = {
   error: unknown;
   retry: () => void;
@@ -30,6 +32,7 @@ export default function Error({ retry }: Props) {
         </button>
         <Link
           href="/"
+          transitionTypes={back}
           className="u-btn u-btn--outline px-7"
         >
           Voltar ao início

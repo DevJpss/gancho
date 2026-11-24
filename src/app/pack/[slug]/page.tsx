@@ -2,10 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import ScriptCard from "@/components/ScriptCard";
+import PageTransition from "@/components/PageTransition";
 import { getPackBySlug, getPacks, getScriptsByPack } from "@/lib/catalog";
 import { formatDate, formatPrice } from "@/lib/format";
 import { jsonLdHtml } from "@/lib/jsonld";
 import { FREE_PREVIEW_COUNT, absoluteUrl } from "@/lib/site";
+
+const forward = ["nav-forward"];
+const back = ["nav-back"];
 
 export async function generateStaticParams() {
   const packs = await getPacks();
@@ -35,7 +39,7 @@ async function PackDetail(props: PageProps<"/pack/[slug]">) {
     return (
       <div className="border border-line bg-panel p-8">
         <h1 className="font-display text-3xl font-bold uppercase">Pack não encontrado</h1>
-        <Link href="/packs" className="u-link mt-4 inline-block font-semibold text-accent">
+        <Link href="/packs" transitionTypes={back} className="u-link mt-4 inline-block font-semibold text-accent">
           Ver todos os packs →
         </Link>
       </div>
@@ -113,12 +117,14 @@ async function PackDetail(props: PageProps<"/pack/[slug]">) {
           </p>
           <Link
             href={`/checkout?kind=pack&slug=${pack.slug}`}
+            transitionTypes={forward}
             className="u-btn u-btn--primary u-btn--block mt-6 px-6"
           >
             Comprar pack
           </Link>
           <Link
             href="/planos"
+            transitionTypes={forward}
             className="u-btn u-btn--outline u-btn--block mt-3 px-6 text-sm"
           >
             Ou assine e receba todos
@@ -136,10 +142,10 @@ async function PackDetail(props: PageProps<"/pack/[slug]">) {
 
 export default function PackPage(props: PageProps<"/pack/[slug]">) {
   return (
-    <main className="px-4 py-14 sm:px-8 lg:px-16">
+    <PageTransition className="px-4 py-14 sm:px-8 lg:px-16">
       <Suspense fallback={<p className="text-sm text-muted">Carregando pack…</p>}>
         <PackDetail {...props} />
       </Suspense>
-    </main>
+    </PageTransition>
   );
 }

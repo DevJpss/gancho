@@ -2,6 +2,8 @@ import Link from "next/link";
 import { formatDate, formatPrice } from "@/lib/format";
 import type { Pack } from "@/lib/types";
 
+const forward = ["nav-forward"];
+
 export default function PackCard({ pack, featured = false }: { pack: Pack; featured?: boolean }) {
   return (
     <article className={`u-card u-reveal flex flex-col border border-line bg-panel p-6 ${featured ? "border-accent" : ""}`}>
@@ -20,6 +22,7 @@ export default function PackCard({ pack, featured = false }: { pack: Pack; featu
         </div>
         <Link
           href={`/pack/${pack.slug}`}
+          transitionTypes={forward}
           className="u-btn u-btn--dark px-5 text-sm"
         >
           Ver pack

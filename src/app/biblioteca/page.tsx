@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import ScriptCard from "@/components/ScriptCard";
+import PageTransition from "@/components/PageTransition";
 import { getPacks, getScriptsByPack } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { maskEmail, maskFullName } from "@/lib/privacy";
@@ -167,8 +168,10 @@ async function LibraryContent(props: PageProps<"/biblioteca">) {
 
 export default function BibliotecaPage(props: PageProps<"/biblioteca">) {
   return (
-    <Suspense fallback={<main className="px-4 py-14 text-sm text-muted">Carregando biblioteca…</main>}>
-      <LibraryContent {...props} />
-    </Suspense>
+    <PageTransition bare>
+      <Suspense fallback={<main className="px-4 py-14 text-sm text-muted">Carregando biblioteca…</main>}>
+        <LibraryContent {...props} />
+      </Suspense>
+    </PageTransition>
   );
 }

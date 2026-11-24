@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import CheckoutForm from "@/components/CheckoutForm";
+import PageTransition from "@/components/PageTransition";
 import { getPackBySlug, getPlans } from "@/lib/catalog";
 
 export const metadata: Metadata = {
@@ -47,10 +48,10 @@ async function CheckoutContent(props: PageProps<"/checkout">) {
 
 export default function CheckoutPage(props: PageProps<"/checkout">) {
   return (
-    <main className="px-4 py-12 sm:px-8 lg:px-16">
+    <PageTransition className="px-4 py-12 sm:px-8 lg:px-16">
       <Suspense fallback={<p className="text-sm text-muted">Preparando o checkout…</p>}>
         <CheckoutContent {...props} />
       </Suspense>
-    </main>
+    </PageTransition>
   );
 }

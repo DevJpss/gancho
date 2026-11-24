@@ -3,10 +3,14 @@ import { connection } from "next/server";
 import Link from "next/link";
 import { Suspense } from "react";
 import SimulatePaymentButton from "@/components/SimulatePaymentButton";
+import PageTransition from "@/components/PageTransition";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasAdminConfig } from "@/lib/supabase/client";
 import { formatPrice } from "@/lib/format";
 import { firstRelation } from "@/lib/relations";
+
+const forward = ["nav-forward"];
+const back = ["nav-back"];
 
 export const metadata: Metadata = {
   title: "Pedido",
@@ -48,7 +52,7 @@ async function OrderDetail(props: PageProps<"/pedido/[code]">) {
     return (
       <div className="u-card u-enter border border-line bg-panel p-8">
         <h1 className="font-display text-3xl font-bold uppercase">Pedido não encontrado</h1>
-        <Link href="/packs" className="u-link mt-4 inline-block font-semibold text-accent">
+        <Link href="/packs" transitionTypes={back} className="u-link mt-4 inline-block font-semibold text-accent">
           Ver packs →
         </Link>
       </div>
@@ -92,6 +96,7 @@ async function OrderDetail(props: PageProps<"/pedido/[code]">) {
             </p>
             <Link
               href={libraryUrl}
+              transitionTypes={forward}
               className="u-btn u-btn--primary mt-5 px-7"
             >
               Abrir minha biblioteca →
@@ -164,7 +169,7 @@ async function OrderDetail(props: PageProps<"/pedido/[code]">) {
             Status: {paid ? "pago" : order.status}
           </p>
         </div>
-        <Link href="/packs" className="u-link mt-6 block text-center text-sm font-semibold text-accent">
+        <Link href="/packs" transitionTypes={back} className="u-link mt-6 block text-center text-sm font-semibold text-accent">
           Ver outros packs
         </Link>
       </aside>
@@ -174,10 +179,10 @@ async function OrderDetail(props: PageProps<"/pedido/[code]">) {
 
 export default function OrderPage(props: PageProps<"/pedido/[code]">) {
   return (
-    <main className="px-4 py-14 sm:px-8 lg:px-16">
+    <PageTransition className="px-4 py-14 sm:px-8 lg:px-16">
       <Suspense fallback={<p className="text-sm text-muted">Carregando pedido…</p>}>
         <OrderDetail {...props} />
       </Suspense>
-    </main>
+    </PageTransition>
   );
 }

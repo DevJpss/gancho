@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/site";
+import PageTransition from "@/components/PageTransition";
 
 export const metadata: Metadata = {
   title: "Termos de uso",
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function TermosPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-14 sm:px-8">
+    <PageTransition className="mx-auto max-w-3xl px-4 py-14 sm:px-8">
       <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Legal</p>
       <h1 className="mt-3 font-display text-5xl font-bold uppercase">Termos de uso</h1>
       <div className="mt-8 space-y-6 text-sm leading-relaxed text-muted">
@@ -63,6 +64,6 @@ export default function TermosPage() {
           </p>
         </section>
       </div>
-    </main>
+    </PageTransition>
   );
 }

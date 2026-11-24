@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import PageTransition from "@/components/PageTransition";
 import { getLatestPack, getNiches, getNicheBySlug, getScriptsByPack } from "@/lib/catalog";
 import { absoluteUrl } from "@/lib/site";
+
+const forward = ["nav-forward"];
 
 export async function generateStaticParams() {
   const niches = await getNiches();
@@ -72,6 +75,7 @@ async function NicheDetail(props: PageProps<"/nichos/[slug]">) {
       {pack ? (
         <Link
           href={`/pack/${pack.slug}`}
+          transitionTypes={forward}
           className="u-btn u-btn--primary mt-10 px-7"
         >
           Ver pack completo →
@@ -83,10 +87,10 @@ async function NicheDetail(props: PageProps<"/nichos/[slug]">) {
 
 export default function NichePage(props: PageProps<"/nichos/[slug]">) {
   return (
-    <main className="px-4 py-14 sm:px-8 lg:px-16">
+    <PageTransition className="px-4 py-14 sm:px-8 lg:px-16">
       <Suspense fallback={<p className="text-sm text-muted">Carregando nicho…</p>}>
         <NicheDetail {...props} />
       </Suspense>
-    </main>
+    </PageTransition>
   );
 }

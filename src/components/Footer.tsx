@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 
+const forward = ["nav-forward"];
+
 export default function Footer() {
   return (
     <footer className="mt-24 bg-ink px-4 py-12 text-white sm:px-8 lg:px-16">
@@ -19,16 +21,16 @@ export default function Footer() {
           <div>
             <p className="mb-3 font-semibold tracking-wider uppercase">Site</p>
             <div className="flex flex-col gap-2 text-line">
-              <Link href="/packs" className="u-link hover:text-white">Packs</Link>
-              <Link href="/planos" className="u-link hover:text-white">Planos</Link>
-              <Link href="/biblioteca" className="u-link hover:text-white">Biblioteca</Link>
+              <Link href="/packs" transitionTypes={forward} className="u-link hover:text-white">Packs</Link>
+              <Link href="/planos" transitionTypes={forward} className="u-link hover:text-white">Planos</Link>
+              <Link href="/biblioteca" transitionTypes={forward} className="u-link hover:text-white">Biblioteca</Link>
             </div>
           </div>
           <div>
             <p className="mb-3 font-semibold tracking-wider uppercase">Legal</p>
             <div className="flex flex-col gap-2 text-line">
-              <Link href="/termos" className="u-link hover:text-white">Termos de uso</Link>
-              <Link href="/privacidade" className="u-link hover:text-white">Privacidade</Link>
+              <Link href="/termos" transitionTypes={forward} className="u-link hover:text-white">Termos de uso</Link>
+              <Link href="/privacidade" transitionTypes={forward} className="u-link hover:text-white">Privacidade</Link>
               <Link href="/admin/login" className="u-link hover:text-white">Admin</Link>
             </div>
           </div>

@@ -260,7 +260,73 @@ details {
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/* Transições entre rotas — direção semanticamente marcada nos links           */
+/* -------------------------------------------------------------------------- */
+
+/* O overlay não deve engolir cliques durante a transição. */
+::view-transition {
+  pointer-events: none;
+}
+
+@keyframes u-nav-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes u-nav-slide {
+  from { translate: var(--nav-offset); }
+  to { translate: 0; }
+}
+
+/* Avançar: o conteúdo antigo sai à esquerda, o novo entra pela direita. */
+::view-transition-old(.nav-forward) {
+  --nav-offset: -48px;
+  animation:
+    150ms ease-in both u-nav-fade reverse,
+    360ms var(--ease-out) both u-nav-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --nav-offset: 48px;
+  animation:
+    190ms ease-out 120ms both u-nav-fade,
+    360ms var(--ease-out) both u-nav-slide;
+}
+
+/* Voltar: espelha a direção para devolver a sensação de histórico. */
+::view-transition-old(.nav-back) {
+  --nav-offset: 48px;
+  animation:
+    150ms ease-in both u-nav-fade reverse,
+    360ms var(--ease-out) both u-nav-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --nav-offset: -48px;
+  animation:
+    190ms ease-out 120ms both u-nav-fade,
+    360ms var(--ease-out) both u-nav-slide;
+}
+
+/* O cabeçalho é âncora espacial: nunca desliza nem pisca. */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+
   html,
   html[data-scroll-behavior="smooth"] {
     scroll-behavior: auto;

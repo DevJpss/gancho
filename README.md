@@ -104,6 +104,19 @@ O botão em `/admin/geracao` dispara o mesmo endpoint manualmente.
 Em `demo`, o pedido fica pendente e o botão em `/pedido/[code]` simula a aprovação.
 Nenhuma cobrança é feita.
 
+### Produção (Vercel)
+
+No painel da Vercel (**Settings → Environment Variables**), configure as mesmas variáveis do
+`.env.local` para **Production** — sobretudo `PAYMENT_MODE=live`, `MERCADO_PAGO_ACCESS_TOKEN`,
+`MERCADO_PAGO_WEBHOOK_SECRET`, `NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY`,
+`NEXT_PUBLIC_SITE_URL=https://gancho-rust.vercel.app`, `CRON_SECRET`, as variáveis do Supabase
+e as de IA. Depois faça um novo deploy.
+
+No Mercado Pago, em **Integrações → Webhooks**, cadastre
+`https://gancho-rust.vercel.app/api/webhooks/pagamento`, marque os eventos **Pagamentos** e
+**Assinaturas** e use o mesmo valor de `MERCADO_PAGO_WEBHOOK_SECRET` como segredo de assinatura.
+Com `PAYMENT_MODE=live`, um `POST` sem assinatura deve responder `401`.
+
 ## Entrega do conteúdo
 
 Não há login para o cliente. Cada `customer` recebe um `access_token` aleatório no banco.
